@@ -1,11 +1,11 @@
-export enum ItemType {
+export enum TodoType {
   Active,
   Completed,
 }
 
-export default interface Item {
+export interface Todo {
   id: number;
   name: string;
   description: string;
-  type: ItemType;
+  type: TodoType;
 }

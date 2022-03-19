@@ -1,6 +1,6 @@
-import { ItemType } from './Item.interface';
+import { TodoType } from './Todo.interface';
 
 export default interface Filter {
   search: string;
-  type: ItemType | null;
+  type: TodoType | null;
 }

@@ -1,13 +1,13 @@
 import FilterType from './interfaces/Filter.interface';
-import Item from './interfaces/Item.interface';
+import { Todo } from './interfaces/Todo.interface';
 
 const useFilter = ({
   items,
   filters,
 }: {
-  items: Item[];
+  items: Todo[];
   filters: FilterType;
-}): Item[] => {
+}): Todo[] => {
   return items.filter(item => {
     if (
       !item.name.toLowerCase().includes(filters.search) &&
