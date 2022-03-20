@@ -1,17 +1,18 @@
-import { useContext } from 'react';
+import { Dispatch, MouseEventHandler, SetStateAction, useContext } from 'react';
 import { ChangeEventHandler, FC, FormEventHandler, useState } from 'react';
 import { TodosContext } from '../context/Todos';
 
 const Form: FC<{
   visible: boolean;
-}> = ({ visible }) => {
+  setVisibility: Dispatch<SetStateAction<boolean>>;
+}> = ({ visible, setVisibility }) => {
   const [nameInput, setNameInput] = useState('');
   const [descriptionInput, setDescriptionInput] = useState('');
   const { dispatch } = useContext(TodosContext);
   const onSubmit: FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault();
     dispatch({
-      type: 'ADD',
+      type: 'todos/ADD',
       payload: {
         data: { name: nameInput, description: descriptionInput },
       },
@@ -26,6 +27,10 @@ const Form: FC<{
   const onDescriptionInputChange: ChangeEventHandler<HTMLInputElement> = e => {
     const { value } = e.currentTarget;
     setDescriptionInput(value);
+  };
+  const onClose: MouseEventHandler<HTMLButtonElement> = e => {
+    e.preventDefault();
+    setVisibility(false);
   };
 
   return (
@@ -44,7 +49,7 @@ const Form: FC<{
             id="name"
             name="name"
             value={nameInput}
-            className={`border-b-2 outline-none relative focus:border-green-600 transition-all duration-300`}
+            className={`border-b-2 outline-none relative focus:border-green-600 transition-all duration-300 bg-inherit`}
             style={{ content: 'none !important' }}
             autoComplete="off"
             onChange={onNameInputChange}
@@ -60,7 +65,7 @@ const Form: FC<{
             id="description"
             name="description"
             value={descriptionInput}
-            className={`border-b-2 outline-none relative focus:border-green-600 transition-all duration-300`}
+            className={`border-b-2 outline-none relative focus:border-green-600 transition-all duration-300 bg-inherit`}
             style={{ content: 'none !important' }}
             autoComplete="off"
             onChange={onDescriptionInputChange}
@@ -68,13 +73,24 @@ const Form: FC<{
           />
         </div>
       </div>
-      <button
-        type="submit"
-        className="bg-green-700 text-white px-3 py-2 my-3 rounded-xl font-semibold flex-grow w-full
+      <div className="flex items-stretch my-2">
+        <button
+          type="submit"
+          className="bg-green-700 text-white px-3 py-2 rounded-xl font-semibold flex-grow w-full
+        hover:opacity-80 transition-all duration-150 mr-1 rounded-r-none"
+        >
+          Add Todo
+        </button>
+        <button
+          className="bg-red-600 text-white font-semibold px-3 py-2
+          rounded-xl rounded-l-none
+          min-w-[20%]
           hover:opacity-80 transition-all duration-150"
-      >
-        Add Todo
-      </button>
+          onClick={onClose}
+        >
+          Close
+        </button>
+      </div>
     </form>
   );
 };

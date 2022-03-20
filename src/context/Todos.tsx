@@ -12,7 +12,12 @@ interface ContextType {
   dispatch: Dispatch<ActionType>;
 }
 
-type Actions = 'ADD' | 'REMOVE' | 'COMPLETE';
+type Actions =
+  | 'todos/ADD'
+  | 'todos/REMOVE'
+  | 'todos/COMPLETE'
+  | 'todos/SET'
+  | 'darkmode/TOGGLE';
 
 const initialState: StateType = { todos: [] };
 const initialContext: ContextType = { state: initialState, dispatch: () => {} };
@@ -23,7 +28,7 @@ type TodoAddData = Omit<Todo, 'id' | 'type'>;
 
 interface ReducerPayloadType {
   id?: number;
-  data?: TodoAddData;
+  data?: TodoAddData | Todo[];
 }
 interface ActionType {
   type: Actions;
@@ -32,33 +37,45 @@ interface ActionType {
 
 const reducer = (state: StateType, action: ActionType): StateType => {
   switch (action.type) {
-    case 'ADD': {
+    case 'todos/ADD': {
       const { data } = action.payload;
       if (!data) return { ...state };
+      if (Array.isArray(data)) return { ...state };
       const ids = state.todos.map(t => t.id);
       const id = Math.max(...ids);
       return {
         ...state,
         todos: [
           ...state.todos,
-          { id: id === -Infinity ? 1 : id + 1, ...data, type: TodoType.Active },
+          {
+            id: id === -Infinity ? 100000 : id + 1,
+            ...data,
+            type: TodoType.Active,
+          },
         ],
       };
     }
-    case 'REMOVE': {
+    case 'todos/REMOVE': {
       const { id } = action.payload;
       if (!id) return { ...state };
       const newTodos = state.todos.filter(t => t.id !== id);
       return { ...state, todos: newTodos };
     }
-    case 'COMPLETE': {
+    case 'todos/COMPLETE': {
       const { id } = action.payload;
       if (!id) return { ...state };
       const newTodos = state.todos.map(t =>
         t.id === id ? { ...t, type: TodoType.Completed } : t
       );
+      console.log(newTodos);
       return { ...state, todos: newTodos };
     }
+    case 'todos/SET': {
+      const todos = action.payload.data;
+      if (!Array.isArray(todos)) return { ...state };
+      return { ...state, todos };
+    }
+
     default:
       return { ...state };
   }
@@ -74,7 +91,7 @@ const TodosProvider: FC = ({ children }) => {
       return state.todos;
     }
     return JSON.parse(todos);
-  }, [state.todos]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const saveToLocalStorage = useCallback(data_ => {
     const data = JSON.stringify(data_);
@@ -83,6 +100,7 @@ const TodosProvider: FC = ({ children }) => {
 
   useEffect(() => {
     const todos = loadFromLocalStorage();
+    dispatch({ type: 'todos/SET', payload: { data: todos } });
   }, [loadFromLocalStorage]);
 
   useEffect(() => {

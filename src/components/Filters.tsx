@@ -33,7 +33,8 @@ const Filters: FC<{ filterHandler: filterHandlerType }> = ({
           </label>
           <input
             type="search"
-            className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+            autoComplete="off"
+            className={`form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-inherit bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none dark:placeholder:text-gray-100`}
             id="search"
             placeholder="Type query"
             onChange={onSearch}
@@ -48,10 +49,10 @@ const Filters: FC<{ filterHandler: filterHandlerType }> = ({
           <button
             key={type_.value}
             className={`px-3 py-2 rounded-xl
-                        lg:w-auto w-full
-                      ${
-                        type === type_.value ? 'bg-gray-600' : 'bg-gray-800'
-                      } text-white hover:opacity-80
+                        lg:w-auto w-full bg-gray-800 dark:bg-gray-200 ${
+                          type_.value === type ? 'opacity-70' : ''
+                        }
+                       text-white dark:text-black hover:opacity-80
                           transition-all duration-300
                         mr-2 last:mr-0`}
             onClick={() => setType(type_.value)}
